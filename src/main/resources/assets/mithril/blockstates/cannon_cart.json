@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "mithril:block/cannon_cart" },
+    "facing=east": { "model": "mithril:block/cannon_cart", "y": 90 },
+    "facing=south": { "model": "mithril:block/cannon_cart", "y": 180 },
+    "facing=west": { "model": "mithril:block/cannon_cart", "y": 270 }
+  }
+}

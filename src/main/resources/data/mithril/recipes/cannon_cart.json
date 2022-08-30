@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "pattern": [
+    "## ",
+    "###"
+  ],
+  "result": {
+    "item": "mithril:cannon_cart"
+  }
+}

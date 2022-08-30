@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "mithril:cannon_cart"
+    },
+    "X": {
+      "item": "mithril:cannon_barrel"
+    }
+  },
+  "pattern": [
+    "X",
+    "#"
+  ],
+  "result": {
+    "item": "mithril:cannon"
+  }
+}

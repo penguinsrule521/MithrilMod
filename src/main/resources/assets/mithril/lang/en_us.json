@@ -1,0 +1,32 @@
+{
+  "item.mithril.mithril_ingot": "Mithril Ingot",
+  "item.mithril.mithril_nugget": "Mithril Nugget",
+  "item.mithril.raw_mithril": "Raw Mithril",
+  "item.mithril.mithril_sword": "Mithril Sword",
+  "item.mithril.mithril_pickaxe": "Mithril Pickaxe",
+  "item.mithril.mithril_axe": "Mithril Axe",
+  "item.mithril.mithril_shovel": "Mithril Shovel",
+  "item.mithril.mithril_hoe": "Mithril Hoe",
+  "item.mithril.mithril_dagger": "Mithril Dagger",
+
+  "item.mithril.wooden_dagger": "Wooden Dagger",
+  "item.mithril.stone_dagger": "Stone Dagger",
+  "item.mithril.iron_dagger": "Iron Dagger",
+  "item.mithril.diamond_dagger": "Diamond Dagger",
+  "item.mithril.netherite_dagger": "Netherite Dagger",
+
+  "block.mithril.mithril_block": "Mithril Block",
+  "block.mithril.mithril_ore": "Mithril Ore",
+  "block.mithril.deepslate_mithril_ore": "Deepslate Mithril Ore",
+  "block.mithril.raw_mithril_block": "Raw Mithril Block",
+
+  "block.mithril.cannon": "Cannon",
+  "item.mithril.cannon_ball": "Cannon Ball",
+  "entity.mithril.cannon_ball": "Cannon Ball",
+  "item.mithril.cannon_barrel": "Cannon Barrel",
+  "block.mithril.cannon_cart": "Cannon Cart",
+
+  "block.mithril.wheel": "Wheel",
+
+  "itemGroup.mithril.mithril": "Mithril"
+}

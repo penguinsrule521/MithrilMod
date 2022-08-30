@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:smelting",
+  "cookingtime": 400,
+  "experience": 3,
+  "group": "mithril_ingot",
+  "ingredient": {
+    "item": "mithril:mithril_ore"
+  },
+  "result": "mithril:mithril_ingot"
+}

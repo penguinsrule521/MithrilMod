@@ -238,7 +238,7 @@ public class CannonBlock extends Block {
                               PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
 
-            if (player.getStackInHand(hand).getItem().equals(Items.FLINT_AND_STEEL) && state.get(LOADED)) {
+            if (player.getStackInHand(hand).getItem().equals(Items.FLINT_AND_STEEL)) {
 
                 if (hand.equals(Hand.MAIN_HAND)) {
                     player.getStackInHand(hand).damage(1, player, (e) -> {

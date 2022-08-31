@@ -5,7 +5,6 @@ import net.PenguinWraith.entity.ModEntities;
 import net.PenguinWraith.entity.custom.CannonBallEntity;
 import net.PenguinWraith.items.ModItems;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
@@ -27,10 +26,10 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.EntityList;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -39,6 +38,7 @@ public class CannonBlock extends Block {
 
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     public static BooleanProperty LOADED = Properties.TRIGGERED;
+    public boolean loading = false;
 
     public CannonBlock(Settings settings) {
         super(settings);
@@ -206,7 +206,7 @@ public class CannonBlock extends Block {
         return BlockRenderType.MODEL;
     }
 
-    public static void fire(PlayerEntity player, BlockPos pos, BlockState state, DirectionProperty dir) {
+    public static void fire(PlayerEntity player, BlockPos pos, BlockState state, DirectionProperty dir, World world) {
 
         player.world.playSound(null, pos, SoundEvents.ENTITY_CREEPER_PRIMED,
                 SoundCategory.HOSTILE, 1, 1);
@@ -231,49 +231,65 @@ public class CannonBlock extends Block {
         player.getWorld().spawnEntity(cannonBall);
         player.world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE,
                 SoundCategory.HOSTILE, 1, 1);
+
+        if (state.get(LOADED)) {
+            world.setBlockState(pos, state.cycle(LOADED));
+        }
     }
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos,
                               PlayerEntity player, Hand hand, BlockHitResult hit) {
+
+        if (world.getBlockState(pos.add(hit.getSide().getVector())).getBlock().equals(Blocks.FIRE))
+            world.setBlockState(pos.add(hit.getSide().getVector()), Blocks.AIR.getDefaultState());
+
         if (!world.isClient) {
 
-            if (player.getStackInHand(hand).getItem().equals(Items.FLINT_AND_STEEL) && state.get(LOADED)) {
+            if (!loading || (player.getStackInHand(hand).getItem().equals(Items.FLINT_AND_STEEL) && state.get(LOADED))) {
+                loading = true;
 
-                if (hand.equals(Hand.MAIN_HAND)) {
-                    player.getStackInHand(hand).damage(1, player, (e) -> {
-                        e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
-                    });
+                if (player.getStackInHand(hand).getItem().equals(Items.FLINT_AND_STEEL) && state.get(LOADED)) {
+                    loading = false;
+
+                    if (hand.equals(Hand.MAIN_HAND)) {
+                        player.getStackInHand(hand).damage(1, player, (e) -> {
+                            e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
+                        });
+                    }
+                    if (hand.equals(Hand.OFF_HAND)) {
+                        player.getStackInHand(hand).damage(1, player, (e) -> {
+                            e.sendEquipmentBreakStatus(EquipmentSlot.OFFHAND);
+                        });
+                    }
+
+                    if (world.getBlockState(pos.add(hit.getSide().getVector())).getBlock().equals(Blocks.FIRE))
+                        world.setBlockState(pos.add(hit.getSide().getVector()), Blocks.AIR.getDefaultState());
+
+                    fire(player, pos, state, FACING, world);
+
+                    return ActionResult.SUCCESS;
+                } else if (player.getStackInHand(hand).getItem().equals(ModItems.CANNON_BALL) && !state.get(LOADED)) {
+                    world.setBlockState(pos, state.cycle(LOADED));
+                    player.getStackInHand(hand).setCount(player.getStackInHand(hand).getCount() - 1);
+                    player.world.playSound(null, pos, SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE,
+                            SoundCategory.AMBIENT, 1, 1);
+
+                    return ActionResult.SUCCESS;
+                } else if (state.get(LOADED)) {
+                    world.setBlockState(pos, state.cycle(LOADED));
+                    player.getInventory().insertStack(new ItemStack(ModItems.CANNON_BALL, 1));
+                    player.world.playSound(null, pos, SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE,
+                            SoundCategory.AMBIENT, 1, 1);
+
+                    return ActionResult.SUCCESS;
+                } else {
+                    loading = false;
+                    return ActionResult.FAIL;
                 }
-                if (hand.equals(Hand.OFF_HAND)) {
-                    player.getStackInHand(hand).damage(1, player, (e) -> {
-                        e.sendEquipmentBreakStatus(EquipmentSlot.OFFHAND);
-                    });
-                }
-
-                if (world.getBlockState(pos.add(hit.getSide().getVector())).getBlock().equals(Blocks.FIRE))
-                    world.setBlockState(pos.add(hit.getSide().getVector()), Blocks.AIR.getDefaultState());
-
-                fire(player, pos, state, FACING);
-
-                return ActionResult.SUCCESS;
-            } else if (player.getStackInHand(hand).getItem().equals(ModItems.CANNON_BALL) && !state.get(LOADED)) {
-                player.sendMessage(Text.of("LOADED"));
-                world.setBlockState(pos, state.cycle(LOADED));
-                player.getStackInHand(hand).setCount(player.getStackInHand(hand).getCount() - 1);
-                player.world.playSound(null, pos, SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE,
-                        SoundCategory.HOSTILE, 1, 1);
-
-                return ActionResult.SUCCESS;
-            } else if (state.get(LOADED)) {
-                player.sendMessage(Text.of("UNLOADED"));
-                world.setBlockState(pos, state.cycle(LOADED));
-                player.getInventory().insertStack(new ItemStack(ModItems.CANNON_BALL, 1));
-                player.world.playSound(null, pos, SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE,
-                        SoundCategory.HOSTILE, 1, 1);
-
-                return ActionResult.SUCCESS;
-            } else {
+            }
+            else {
+                loading = false;
                 return ActionResult.FAIL;
             }
         } else {

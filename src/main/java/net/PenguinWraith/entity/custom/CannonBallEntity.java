@@ -33,8 +33,8 @@ public class CannonBallEntity extends PersistentProjectileEntity implements IAni
         super(ModEntities.CANNON_BALL, owner, world);
     }
 
-    public CannonBallEntity(EntityType entity, World world, double x, double y, double z) {
-        super(entity, x, y, z, world);
+    public CannonBallEntity(World world, double x, double y, double z) {
+        super(ModEntities.CANNON_BALL, x, y, z, world);
     }
 
     @Override

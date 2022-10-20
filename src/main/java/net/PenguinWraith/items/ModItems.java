@@ -62,7 +62,6 @@ public class ModItems {
             new DaggerItem(ModToolMaterials.MITHRIL, 0, -1.6f,
                     new FabricItemSettings().group(ModItemGroup.MITHRIL)));
 
-
     public static final Item CANNON_BALL = registerItem("cannon_ball",
             new Item(new FabricItemSettings().group(ItemGroup.COMBAT).maxCount(16)));
 

@@ -215,16 +215,16 @@ public class CannonBlock extends Block {
         float yaw;
         if (state.get(dir).equals(Direction.NORTH)) {
             yaw = -180;
-            cannonBall = new CannonBallEntity(ModEntities.CANNON_BALL, player.getWorld(), pos.getX() + 0.5D, pos.getY() + 0.4375D, pos.getZ() - 1.5D);
+            cannonBall = new CannonBallEntity(player.getWorld(), pos.getX() + 0.5D, pos.getY() + 0.4375D, pos.getZ() - 1.5D);
         } else if (state.get(dir).equals(Direction.EAST)) {
             yaw = -90;
-            cannonBall = new CannonBallEntity(ModEntities.CANNON_BALL, player.getWorld(), pos.getX() + 2.5D, pos.getY() + 0.4375D, pos.getZ() + 0.5D);
+            cannonBall = new CannonBallEntity(player.getWorld(), pos.getX() + 2.5D, pos.getY() + 0.4375D, pos.getZ() + 0.5D);
         } else if (state.get(dir).equals(Direction.SOUTH)) {
             yaw = 0;
-            cannonBall = new CannonBallEntity(ModEntities.CANNON_BALL, player.getWorld(), pos.getX() + 0.5D, pos.getY() + 0.4375D, pos.getZ() + 2.5D);
+            cannonBall = new CannonBallEntity(player.getWorld(), pos.getX() + 0.5D, pos.getY() + 0.4375D, pos.getZ() + 2.5D);
         } else {
             yaw = 90;
-            cannonBall = new CannonBallEntity(ModEntities.CANNON_BALL, player.getWorld(), pos.getX() - 1.5D, pos.getY() + 0.4375D, pos.getZ() + 0.5D);
+            cannonBall = new CannonBallEntity(player.getWorld(), pos.getX() - 1.5D, pos.getY() + 0.4375D, pos.getZ() + 0.5D);
         }
 
         cannonBall.setVelocity(player, 0, yaw, 0, 5F, 1.0F);

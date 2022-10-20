@@ -1,19 +1,17 @@
 package net.PenguinWraith.blocks.custom;
 
-import net.PenguinWraith.entity.custom.ModBlockEntity;
+import net.PenguinWraith.entity.custom.ModFallingBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.WallMountLocation;
+import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.BlockMirror;
@@ -23,35 +21,26 @@ import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.util.math.Position;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class WheelBlock extends WallMountedBlock {
 
+    private ArrayList<Position> ship = new ArrayList<>();
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
 
     public WheelBlock(Settings settings) {
         super(settings);
-    }
-
-    @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        return ActionResult.FAIL;
-    }
-
-    @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-
-        placer.sendMessage(Text.of("HI"));
     }
 
     public static final VoxelShape SHAPE_N = Stream.of(
@@ -262,6 +251,19 @@ public class WheelBlock extends WallMountedBlock {
         }
     }
 
+    @Override
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        return ActionResult.FAIL;
+    }
+
+    @Override
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+
+        BlockState blockState = world.getBlockState(pos.add(state.get(FACING).getOpposite().getVector()));
+        ModFallingBlockEntity.spawnFromBlock(world, pos, state);
+        ModFallingBlockEntity.spawnFromBlock(world, pos.add(state.get(FACING).getOpposite().getVector()), blockState);
+    }
+
     public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
         return canPlaceAt(world, pos, state);
     }
@@ -280,9 +282,9 @@ public class WheelBlock extends WallMountedBlock {
             Direction direction = var2[var4];
             BlockState blockState;
             if (direction.getAxis() == Direction.Axis.Y) {
-                blockState = (BlockState)((BlockState)this.getDefaultState().with(FACE, direction == Direction.UP ? WallMountLocation.CEILING : WallMountLocation.FLOOR)).with(FACING, ctx.getPlayerFacing());
+                blockState = (this.getDefaultState().with(FACE, direction == Direction.UP ? WallMountLocation.CEILING : WallMountLocation.FLOOR)).with(FACING, ctx.getPlayerFacing());
             } else {
-                blockState = (BlockState)((BlockState)this.getDefaultState().with(FACE, WallMountLocation.WALL)).with(FACING, direction.getOpposite());
+                blockState = (this.getDefaultState().with(FACE, WallMountLocation.WALL)).with(FACING, direction.getOpposite());
             }
 
             if (blockState.canPlaceAt(ctx.getWorld(), ctx.getBlockPos())) {
